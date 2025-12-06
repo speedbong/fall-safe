@@ -2,14 +2,10 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <!-- ✅ 모바일 비율 맞추는 핵심 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>넘어짐 위험 관리</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             margin: 0;
@@ -48,8 +44,8 @@
         }
 
         main {
-            padding: 12px 16px 80px 16px; /* 아래 CSV 버튼 공간 */
-            max-width: 960px;
+            padding: 12px 16px 80px 16px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -58,13 +54,18 @@
             margin: 16px 0 6px;
         }
 
-        .floor-picker {
-            margin-top: 4px;
+        .floor-picker { margin-top: 4px; }
+
+        select {
+            width: 100%;
+            max-width: 500px;
+            padding: 6px;
+            font-size: 13px;
         }
 
         .sector-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 8px;
             margin-top: 8px;
         }
@@ -90,12 +91,6 @@
         .row > div {
             flex: 1;
             min-width: 180px;
-        }
-
-        select {
-            width: 100%;
-            padding: 6px;
-            font-size: 13px;
         }
 
         .photo-buttons {
@@ -136,6 +131,7 @@
         .primary-btn {
             margin-top: 12px;
             width: 100%;
+            max-width: 500px;
             padding: 10px;
             font-size: 15px;
             border-radius: 10px;
@@ -204,15 +200,12 @@
             cursor: pointer;
         }
 
-        /* ===== 히트맵 공통 ===== */
+        /* 기본 히트맵 (6층 제외) */
         .heatmap-grid {
-            margin-top: 10px;
-        }
-        /* 리스트형 히트맵 (B1~5층) */
-        .heatmap-grid-list {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 8px;
+            margin-top: 10px;
         }
         .heat-cell {
             border-radius: 8px;
@@ -221,35 +214,34 @@
             font-size: 13px;
             text-align: center;
         }
-        /* 평면도 이미지 위 오버레이(6층) */
-        .heatmap-grid-image {
-            position: relative;
-        }
-        .heatmap-floor-wrapper {
+
+        /* 6층 평면도 위 히트맵 */
+        .floorplan-wrapper {
             position: relative;
             width: 100%;
-            max-width: 100%;
+            max-width: 1200px;
+            margin-top: 12px;
         }
-        .heatmap-floor-image {
+        .floorplan-img {
             width: 100%;
             display: block;
         }
-        .heatmap-overlay {
+        #floorplanCells {
             position: absolute;
             inset: 0;
         }
-        .heat-cell-abs {
+        .floorplan-cell {
             position: absolute;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            box-sizing: border-box;
+            justify-content: center;
             border-radius: 8px;
-            padding: 4px;
             color: #ffffff;
-            font-size: 11px;
+            font-size: 12px;
             text-align: center;
+            padding: 2px;
+            pointer-events: none;
         }
 
         /* 하단 CSV 버튼바 */
@@ -316,101 +308,23 @@
             font-size: 16px;
         }
 
-        /* 출입/식권 데모용 입력 */
-        .text-input {
-            width: 100%;
-            padding: 8px;
-            font-size: 13px;
-            border-radius: 8px;
-            border: 1px solid #d0d0d4;
-        }
-        .small-btn-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 6px;
-        }
-        .small-btn-row button {
-            border: none;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            background: #e5e5ea;
-        }
-        .qr-box {
-            margin-top: 8px;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .qr-box-inner {
-            padding: 8px;
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        }
-        .qr-label {
-            font-size: 12px;
-            color: #444;
-        }
-
-        .log-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            background: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 6px;
-        }
-        .log-table th,
-        .log-table td {
-            padding: 6px 8px;
-            border-bottom: 1px solid #eeeeee;
-        }
-        .log-table th {
-            background: #f0f0f5;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        /* ✅ 모바일 최적화 */
+        /* 모바일 최적화 */
         @media (max-width: 600px) {
-            header {
-                padding: 10px 12px;
-            }
-            main {
-                padding: 10px 12px 80px 12px;
-            }
-            h1 {
-                font-size: 16px;
-            }
+            header { padding: 10px 12px; }
+            main { padding: 10px 12px 80px 12px; }
+            h1 { font-size: 16px; }
             .section-title {
                 margin-top: 12px;
                 font-size: 14px;
             }
-            .row {
-                flex-direction: column;
-            }
-            .row > div {
-                min-width: 0;
-            }
-            .sector-grid,
-            .heatmap-grid-list {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-            .report-card {
-                padding: 10px;
-            }
+            .row { flex-direction: column; }
+            .row > div { min-width: 0; }
         }
     </style>
 </head>
 <body>
 <header>
-    <h1>건설 현장 위험 관리</h1>
+    <h1>넘어짐 위험 관리</h1>
     <div class="mode-toggle">
         <div class="mode-btn active" id="mode-report">신고 등록</div>
         <div class="mode-btn" id="mode-heatmap">히트맵 보기 (관리자)</div>
@@ -450,44 +364,13 @@
 
         <button class="primary-btn" id="btnRegister">위험 등록하기</button>
 
-        <!-- ✅ ⑤ 출입 / 식권 데모 영역 -->
-        <div class="section-title">⑤ 출입·식권 데모 (QR 기반 아이디어)</div>
-        <div>
-            <div style="font-size:13px; margin-bottom:4px;">작업자 이름 또는 ID</div>
-            <input id="workerIdInput" class="text-input" placeholder="예: 홍길동, W001 등">
-        </div>
-        <div class="small-btn-row">
-            <button id="btnPassQR">출입용 QR 생성</button>
-            <button id="btnMockEntryIn">입장 로그 추가(데모)</button>
-            <button id="btnMockEntryOut">퇴장 로그 추가(데모)</button>
-        </div>
-        <div class="qr-box">
-            <div>
-                <div class="qr-label">출입용 QR (데모)</div>
-                <div id="passQrBox" class="qr-box-inner"></div>
-            </div>
-        </div>
-
-        <div style="margin-top:10px;" class="small-btn-row">
-            <button id="btnMealQR">오늘 식권 QR 발급(데모)</button>
-        </div>
-        <div class="qr-box">
-            <div>
-                <div class="qr-label">식권 QR (데모)</div>
-                <div id="mealQrBox" class="qr-box-inner"></div>
-            </div>
-            <div class="qr-label" id="mealStatus" style="min-width: 160px;">
-                아직 오늘 식권이 발급되지 않았습니다.
-            </div>
-        </div>
-
         <div class="reports-header">
             <h2>등록된 신고 <span id="reportCount">(0건)</span></h2>
         </div>
         <div id="reportList"></div>
     </section>
 
-    <!-- 히트맵 + 관리자 로그 화면 -->
+    <!-- 히트맵 화면 -->
     <section id="screen-heatmap" style="display:none;">
         <div class="section-title">층 선택</div>
         <div class="floor-picker">
@@ -497,32 +380,26 @@
             현재 층 섹터별 신고 히트맵<br>
             <span style="font-size: 11px; color:#666;">※ 색이 진할수록 신고 횟수가 많은 구역입니다.</span>
         </div>
+
+        <!-- 일반 격자 히트맵 -->
         <div id="heatmapGrid" class="heatmap-grid"></div>
 
-        <!-- ✅ 관리자용 출입/식권 로그 Mock -->
-        <div class="section-title" style="margin-top:18px;">출입 로그 (데모)</div>
-        <table class="log-table">
-            <thead>
-                <tr>
-                    <th>시간</th>
-                    <th>작업자</th>
-                    <th>구분</th>
-                </tr>
-            </thead>
-            <tbody id="entryLogBody"></tbody>
-        </table>
+        <!-- 6층 전용 평면도 히트맵 -->
+        <div id="heatmapFloorplan" class="floorplan-wrapper" style="display:none;">
+            <img src="plan_6f.png" alt="6층 평면도" class="floorplan-img">
+            <div id="floorplanCells"></div>
+        </div>
 
-        <div class="section-title" style="margin-top:18px;">식권 발급 로그 (데모)</div>
-        <table class="log-table">
-            <thead>
-                <tr>
-                    <th>시간</th>
-                    <th>작업자</th>
-                    <th>토큰</th>
-                </tr>
-            </thead>
-            <tbody id="mealLogBody"></tbody>
-        </table>
+        <!-- 데모 영역 -->
+        <div class="section-title" style="margin-top:24px;">출입 로그 (데모)</div>
+        <div style="background:#fff;border-radius:8px;padding:8px 10px;font-size:13px;color:#666;">
+            출입 로그가 없습니다. (데모용 영역)
+        </div>
+
+        <div class="section-title" style="margin-top:16px;">식권 발급 로그 (데모)</div>
+        <div style="background:#fff;border-radius:8px;padding:8px 10px;font-size:13px;color:#666;">
+            식권 발급 로그가 없습니다. (데모용 영역)
+        </div>
     </section>
 </main>
 
@@ -541,22 +418,20 @@
     </div>
 </div>
 
-<!-- ✅ QR 코드 라이브러리 (CDN) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
 <script>
-    /* === 기본 데이터 구조 === */
+    /* ========= 기본 데이터 ========= */
     const floors = [
-        { id: "B1", name: "지하 1층", sectors: ["A-1", "A-2", "A-3", "A-4"] },
-        { id: "1F", name: "1층",      sectors: ["B-1", "B-2", "B-3", "B-4", "B-5"] },
-        { id: "2F", name: "2층",      sectors: ["C-1", "C-2", "C-3", "C-4", "C-5"] },
-        { id: "3F", name: "3층",      sectors: ["D-1", "D-2", "D-3", "D-4", "D-5"] },
-        { id: "4F", name: "4층",      sectors: ["E-1", "E-2", "E-3", "E-4", "E-5"] },
-        { id: "5F", name: "5층",      sectors: ["F-1", "F-2", "F-3", "F-4", "F-5"] },
-        { id: "6F",
+        { id: "B1", name: "지하 1층", sectors: ["A-1","A-2","B-1","B-2"] },
+        { id: "1F", name: "1층",      sectors: ["A-1","A-2","C-1","C-2","C-3"] },
+        { id: "2F", name: "2층",      sectors: ["A-1","A-2","C-1","C-2","C-3"] },
+        { id: "3F", name: "3층",      sectors: ["A-1","A-2","C-1","C-2","C-3"] },
+        { id: "4F", name: "4층",      sectors: ["A-1","A-2","C-1","C-2","C-3"] },
+        { id: "5F", name: "5층",      sectors: ["A-1","A-2","C-1","C-2","C-3"] },
+        {
+            id: "6F",
             name: "6층",
             sectors: Array.from({ length: 34 }, (_, i) => `G-${i+1}`)
-        ]}
+        }
     ];
 
     const hazardTypes = [
@@ -574,7 +449,7 @@
         { id: "기타", label: "기타" }
     ];
 
-       /* 6층 평면도 레이아웃 (비율 값) */
+    /* 6층 평면도 레이아웃 (비율 값) */
     const sectorLayout = {
       "6F": {
 // ───── 왼쪽 날개 상부 (1~4호) ─────
@@ -635,6 +510,7 @@
       }
     };
 
+    /* ========= 상태 & DOM ========= */
     let reports = [];
     let selectedFloorIndex = 0;
     let selectedSectorId = null;
@@ -642,57 +518,73 @@
     let selectedWork = workTypes[0].id;
     let selectedImages = [];
 
-    // 출입/식권 로그 (데모용)
-    let entryLogs = []; // {id, workerId, time, type}
-    let mealLogs  = []; // {id, workerId, time, token}
+    const modeReportBtn   = document.getElementById("mode-report");
+    const modeHeatmapBtn  = document.getElementById("mode-heatmap");
+    const screenReport    = document.getElementById("screen-report");
+    const screenHeatmap   = document.getElementById("screen-heatmap");
 
-    // QR 인스턴스
-    let passQrInstance = null;
-    let mealQrInstance = null;
+    const floorSelect     = document.getElementById("floorSelect");
+    const sectorGrid      = document.getElementById("sectorGrid");
+    const hazardSelect    = document.getElementById("hazardSelect");
+    const workSelect      = document.getElementById("workSelect");
 
-    const modeReportBtn = document.getElementById("mode-report");
-    const modeHeatmapBtn = document.getElementById("mode-heatmap");
-    const screenReport = document.getElementById("screen-report");
-    const screenHeatmap = document.getElementById("screen-heatmap");
+    const selectedThumbs  = document.getElementById("selectedThumbs");
+    const fileInput       = document.getElementById("fileInput");
+    const btnAlbum        = document.getElementById("btnAlbum");
+    const btnCamera       = document.getElementById("btnCamera");
+    const btnRegister     = document.getElementById("btnRegister");
 
-    const floorSelect = document.getElementById("floorSelect");
-    const sectorGrid = document.getElementById("sectorGrid");
-    const hazardSelect = document.getElementById("hazardSelect");
-    const workSelect = document.getElementById("workSelect");
-
-    const selectedThumbs = document.getElementById("selectedThumbs");
-    const fileInput = document.getElementById("fileInput");
-    const btnAlbum = document.getElementById("btnAlbum");
-    const btnCamera = document.getElementById("btnCamera");
-    const btnRegister = document.getElementById("btnRegister");
-
-    const reportList = document.getElementById("reportList");
-    const reportCount = document.getElementById("reportCount");
-    const btnCSV = document.getElementById("btnCSV");
+    const reportList      = document.getElementById("reportList");
+    const reportCount     = document.getElementById("reportCount");
+    const btnCSV          = document.getElementById("btnCSV");
 
     const heatFloorSelect = document.getElementById("heatFloorSelect");
-    const heatmapGrid = document.getElementById("heatmapGrid");
+    const heatmapGrid     = document.getElementById("heatmapGrid");
+    const heatmapFloorplan= document.getElementById("heatmapFloorplan");
+    const floorplanCells  = document.getElementById("floorplanCells");
 
-    const imageModal = document.getElementById("imageModal");
-    const imageModalImg = document.getElementById("imageModalImg");
+    const imageModal      = document.getElementById("imageModal");
+    const imageModalImg   = document.getElementById("imageModalImg");
     const imageModalClose = document.getElementById("imageModalClose");
 
-    // 출입/식권 데모 DOM
-    const workerIdInput = document.getElementById("workerIdInput");
-    const btnPassQR = document.getElementById("btnPassQR");
-    const btnMockEntryIn = document.getElementById("btnMockEntryIn");
-    const btnMockEntryOut = document.getElementById("btnMockEntryOut");
-    const passQrBox = document.getElementById("passQrBox");
+    /* ========= 유틸 ========= */
+    function heatColor(count) {
+        if (count === 0) return "rgba(52,199,89,0.5)";
+        if (count <= 2) return "rgba(255,204,0,0.8)";
+        if (count <= 4) return "rgba(255,149,0,0.85)";
+        return "rgba(255,59,48,0.9)";
+    }
+    function quote(str) {
+        return `"${String(str).replace(/"/g, '""')}"`;
+    }
+    function formatDate(d) {
+        const yy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mi = String(d.getMinutes()).padStart(2, "0");
+        return `${yy}.${mm}.${dd} ${hh}:${mi}`;
+    }
+    function formatCSVDate(d) {
+        const yy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mi = String(d.getMinutes()).padStart(2, "0");
+        const ss = String(d.getSeconds()).padStart(2, "0");
+        return `${yy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+    }
+    function formatFilenameDate(d) {
+        const yy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mi = String(d.getMinutes()).padStart(2, "0");
+        const ss = String(d.getSeconds()).padStart(2, "0");
+        return `${yy}${mm}${dd}_${hh}${mi}${ss}`;
+    }
 
-    const btnMealQR = document.getElementById("btnMealQR");
-    const mealQrBox = document.getElementById("mealQrBox");
-    const mealStatus = document.getElementById("mealStatus");
-
-    // 관리자 로그 테이블 DOM
-    const entryLogBody = document.getElementById("entryLogBody");
-    const mealLogBody = document.getElementById("mealLogBody");
-
-    /* === 모드 전환 === */
+    /* ========= 모드 전환 ========= */
     modeReportBtn.addEventListener("click", () => {
         modeReportBtn.classList.add("active");
         modeHeatmapBtn.classList.remove("active");
@@ -705,23 +597,21 @@
         screenReport.style.display = "none";
         screenHeatmap.style.display = "";
         updateHeatmap();
-        renderAdminLogs();
     });
 
-    /* === 초기화 === */
+    /* ========= 초기화 ========= */
     function initFloorSelects() {
         floors.forEach((f, index) => {
-            const option1 = document.createElement("option");
-            option1.value = index;
-            option1.textContent = f.name;
-            floorSelect.appendChild(option1);
+            const o1 = document.createElement("option");
+            o1.value = index;
+            o1.textContent = f.name;
+            floorSelect.appendChild(o1);
 
-            const option2 = document.createElement("option");
-            option2.value = index;
-            option2.textContent = f.name;
-            heatFloorSelect.appendChild(option2);
+            const o2 = document.createElement("option");
+            o2.value = index;
+            o2.textContent = f.name;
+            heatFloorSelect.appendChild(o2);
         });
-
         floorSelect.value = "0";
         heatFloorSelect.value = "0";
         renderSectorButtons();
@@ -730,16 +620,26 @@
     function renderSectorButtons() {
         sectorGrid.innerHTML = "";
         const floor = floors[selectedFloorIndex];
+
+        sectorGrid.style.gridTemplateColumns =
+            floor.id === "6F" ? "repeat(4, minmax(0,1fr))"
+                              : "repeat(2, minmax(0,1fr))";
+
         floor.sectors.forEach(sectorId => {
             const btn = document.createElement("div");
-            btn.className = "sector-btn" + (selectedSectorId === sectorId ? " selected" : "");
-            btn.textContent = sectorId + " 구역";
+            btn.className =
+                "sector-btn" + (selectedSectorId === sectorId ? " selected" : "");
+            const label =
+                floor.id === "6F" ? `${sectorId}호` : `${sectorId} 구역`;
+            btn.textContent = label;
             btn.dataset.sectorId = sectorId;
+
             btn.addEventListener("click", () => {
                 selectedSectorId = sectorId;
                 renderSectorButtons();
                 updateRegisterButtonState();
             });
+
             sectorGrid.appendChild(btn);
         });
     }
@@ -765,7 +665,10 @@
         renderSectorButtons();
         updateRegisterButtonState();
     });
-
+    heatFloorSelect.addEventListener("change", () => {
+        selectedFloorIndex = parseInt(heatFloorSelect.value, 10);
+        updateHeatmap();
+    });
     hazardSelect.addEventListener("change", () => {
         selectedHazard = hazardSelect.value;
     });
@@ -773,17 +676,15 @@
         selectedWork = workSelect.value;
     });
 
-    /* === 사진 첨부 === */
+    /* ========= 사진 첨부 ========= */
     btnAlbum.addEventListener("click", () => {
         fileInput.removeAttribute("capture");
         fileInput.click();
     });
-
     btnCamera.addEventListener("click", () => {
         fileInput.setAttribute("capture", "environment");
         fileInput.click();
     });
-
     fileInput.addEventListener("change", (e) => {
         const files = Array.from(e.target.files || []);
         files.forEach(file => {
@@ -794,17 +695,16 @@
         renderSelectedThumbs();
         fileInput.value = "";
     });
-
     function renderSelectedThumbs() {
         selectedThumbs.innerHTML = "";
-        selectedImages.forEach(imgObj => {
+        selectedImages.forEach(obj => {
             const img = document.createElement("img");
-            img.src = imgObj.url;
+            img.src = obj.url;
             selectedThumbs.appendChild(img);
         });
     }
 
-    /* === 신고 등록 === */
+    /* ========= 신고 등록 ========= */
     btnRegister.addEventListener("click", () => {
         if (!selectedSectorId) return;
 
@@ -812,18 +712,17 @@
         const floorId = floor.id;
         const floorName = floor.name;
         const sectorId = selectedSectorId;
-        const sectorName = sectorId + " 구역";
+        const sectorName =
+            floorId === "6F" ? `${sectorId}호` : `${sectorId} 구역`;
         const locationCode = `${floorId}-${sectorId}`;
         const hazardType = selectedHazard;
         const workType = selectedWork;
         const date = new Date();
 
-        const images = selectedImages.map(imgObj => ({
-            url: imgObj.url
-        }));
+        const images = selectedImages.map(o => ({ url: o.url }));
 
         const report = {
-            id: crypto.randomUUID(),
+            id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
             floorId,
             floorName,
             sectorId,
@@ -836,7 +735,6 @@
         };
 
         reports.unshift(report);
-
         selectedSectorId = null;
         selectedImages = [];
         renderSelectedThumbs();
@@ -855,50 +753,47 @@
     function renderReportList() {
         reportList.innerHTML = "";
         reportCount.textContent = `(${reports.length}건)`;
-
-        reports.forEach(report => {
+        reports.forEach(r => {
             const card = document.createElement("div");
             card.className = "report-card";
 
             const title = document.createElement("div");
             title.className = "report-title";
-            title.textContent = `${report.floorName} · ${report.sectorName}`;
+            title.textContent = `${r.floorName} · ${r.sectorName}`;
 
-            const meta1 = document.createElement("div");
-            meta1.className = "report-meta";
-            meta1.textContent = `위치코드: ${report.locationCode}`;
+            const m1 = document.createElement("div");
+            m1.className = "report-meta";
+            m1.textContent = `위치코드: ${r.locationCode}`;
 
-            const meta2 = document.createElement("div");
-            meta2.className = "report-meta";
-            meta2.textContent = `유형: ${report.hazardType} / 작업: ${report.workType}`;
+            const m2 = document.createElement("div");
+            m2.className = "report-meta";
+            m2.textContent = `유형: ${r.hazardType} / 작업: ${r.workType}`;
 
-            const meta3 = document.createElement("div");
-            meta3.className = "report-meta";
-            meta3.textContent = formatDate(report.date);
+            const m3 = document.createElement("div");
+            m3.className = "report-meta";
+            m3.textContent = formatDate(r.date);
 
             const del = document.createElement("button");
             del.className = "report-delete";
             del.textContent = "🗑";
-            del.addEventListener("click", () => deleteReport(report.id));
+            del.addEventListener("click", () => deleteReport(r.id));
 
             card.appendChild(title);
-            card.appendChild(meta1);
-            card.appendChild(meta2);
-            card.appendChild(meta3);
+            card.appendChild(m1);
+            card.appendChild(m2);
+            card.appendChild(m3);
             card.appendChild(del);
 
-            if (report.images && report.images.length > 0) {
-                const photoRow = document.createElement("div");
-                photoRow.className = "report-photos";
-                report.images.forEach((imgObj) => {
+            if (r.images && r.images.length > 0) {
+                const row = document.createElement("div");
+                row.className = "report-photos";
+                r.images.forEach(imgObj => {
                     const img = document.createElement("img");
                     img.src = imgObj.url;
-                    img.addEventListener("click", () => {
-                        openImageModal(imgObj.url);
-                    });
-                    photoRow.appendChild(img);
+                    img.addEventListener("click", () => openImageModal(imgObj.url));
+                    row.appendChild(img);
                 });
-                card.appendChild(photoRow);
+                card.appendChild(row);
             }
 
             reportList.appendChild(card);
@@ -909,7 +804,7 @@
         btnRegister.disabled = !selectedSectorId;
     }
 
-    /* === 이미지 모달 === */
+    /* ========= 이미지 모달 ========= */
     function openImageModal(url) {
         imageModalImg.src = url;
         imageModal.style.display = "flex";
@@ -925,20 +820,14 @@
         }
     });
 
-    /* === CSV 내보내기 === */
+    /* ========= CSV ========= */
     function updateCSVButtonState() {
-        if (reports.length === 0) {
-            btnCSV.classList.add("disabled");
-        } else {
-            btnCSV.classList.remove("disabled");
-        }
+        if (reports.length === 0) btnCSV.classList.add("disabled");
+        else btnCSV.classList.remove("disabled");
     }
-
     btnCSV.addEventListener("click", () => {
         if (reports.length === 0) return;
-
         let csv = "floorId,floorName,sectorId,sectorName,locationCode,hazardType,workType,date,imageCount\n";
-
         reports.forEach(r => {
             const dateStr = formatCSVDate(r.date);
             const line = [
@@ -954,264 +843,68 @@
             ].join(",");
             csv += line + "\n";
         });
-
         const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
         const blob = new Blob([bom, csv], { type: "text/csv;charset=utf-8;" });
-
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         const ts = new Date();
-        const name = `Reports_${formatFilenameDate(ts)}.csv`;
         a.href = url;
-        a.download = name;
+        a.download = `Reports_${formatFilenameDate(ts)}.csv`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     });
 
-    function quote(str) {
-        return `"${String(str).replace(/"/g, '""')}"`;
-    }
-
-    function formatDate(d) {
-        const yy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, "0");
-        const dd = String(d.getDate()).padStart(2, "0");
-        const hh = String(d.getHours()).toString().padStart(2, "0");
-        const mi = String(d.getMinutes()).padStart(2, "0");
-        return `${yy}.${mm}.${dd} ${hh}:${mi}`;
-    }
-
-    function formatCSVDate(d) {
-        const yy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, "0");
-        const dd = String(d.getDate()).padStart(2, "0");
-        const hh = String(d.getHours()).toString().padStart(2, "0");
-        const mi = String(d.getMinutes()).padStart(2, "0");
-        const ss = String(d.getSeconds()).toString().padStart(2, "0");
-        return `${yy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
-    }
-
-    function formatFilenameDate(d) {
-        const yy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, "0");
-        const dd = String(d.getDate()).padStart(2, "0");
-        const hh = String(d.getHours()).toString().padStart(2, "0");
-        const mi = String(d.getMinutes()).padStart(2, "0");
-        const ss = String(d.getSeconds()).toString().padStart(2, "0");
-        return `${yy}${mm}${dd}_${hh}${mi}${ss}`;
-    }
-
-    /* === 히트맵 === */
-    heatFloorSelect.addEventListener("change", () => {
-        selectedFloorIndex = parseInt(heatFloorSelect.value, 10);
-        updateHeatmap();
-    });
-
+    /* ========= 히트맵 ========= */
     function updateHeatmap() {
-        heatmapGrid.innerHTML = "";
         const floor = floors[selectedFloorIndex];
         const floorId = floor.id;
-        const is6F = floorId === "6F";
 
-        if (is6F) {
-            // 6층: 평면도 이미지 위에 오버레이
-            heatmapGrid.className = "heatmap-grid heatmap-grid-image";
+        if (floorId === "6F") {
+            heatmapGrid.style.display = "none";
+            heatmapFloorplan.style.display = "block";
+            floorplanCells.innerHTML = "";
 
-            const wrapper = document.createElement("div");
-            wrapper.className = "heatmap-floor-wrapper";
-
-            const img = document.createElement("img");
-            img.src = "plan_6f.png";   // ✅ 같은 폴더에 있는 6층 평면도 파일
-            img.alt = "6층 평면도";
-            img.className = "heatmap-floor-image";
-
-            const overlay = document.createElement("div");
-            overlay.className = "heatmap-overlay";
-
-            const layoutMap = sectorLayout["6F"];
-
-            floor.sectors.forEach(sectorId => {
-                const layout = layoutMap[sectorId];
-                if (!layout) return; // 레이아웃 없으면 스킵
-
-                const count = reports.filter(
-                    r => r.floorId === floorId && r.sectorId === sectorId
-                ).length;
+            for (let i = 1; i <= 34; i++) {
+                const key = String(i);
+                const layout = sectorLayout["6F"][key];
+                if (!layout) continue;
+                const sectorId = `G-${i}`;
+                const count = reports.filter(r => r.floorId === "6F" && r.sectorId === sectorId).length;
 
                 const cell = document.createElement("div");
-                cell.className = "heat-cell heat-cell-abs";
+                cell.className = "floorplan-cell";
                 cell.style.left   = (layout.x * 100) + "%";
                 cell.style.top    = (layout.y * 100) + "%";
                 cell.style.width  = (layout.w * 100) + "%";
                 cell.style.height = (layout.h * 100) + "%";
                 cell.style.background = heatColor(count);
-
-                cell.innerHTML = `<div>${sectorId}</div><div>${count}건</div>`;
-                overlay.appendChild(cell);
-            });
-
-            wrapper.appendChild(img);
-            wrapper.appendChild(overlay);
-            heatmapGrid.appendChild(wrapper);
-
+                cell.innerHTML = `<div>${sectorId}</div><div style="font-size:11px;">${count}건</div>`;
+                floorplanCells.appendChild(cell);
+            }
         } else {
-            // 다른 층: 기존처럼 리스트형 히트맵
-            heatmapGrid.className = "heatmap-grid heatmap-grid-list";
-
+            heatmapFloorplan.style.display = "none";
+            heatmapGrid.style.display = "grid";
+            heatmapGrid.innerHTML = "";
             floor.sectors.forEach(sectorId => {
-                const count = reports.filter(
-                    r => r.floorId === floorId && r.sectorId === sectorId
-                ).length;
+                const count = reports.filter(r => r.floorId === floorId && r.sectorId === sectorId).length;
                 const cell = document.createElement("div");
                 cell.className = "heat-cell";
                 cell.style.background = heatColor(count);
-                cell.innerHTML = `<div>${sectorId} 구역</div><div style="font-size:12px;">${count}건</div>`;
+                const label = `${sectorId} 구역`;
+                cell.innerHTML = `<div>${label}</div><div style="font-size:12px;">${count}건</div>`;
                 heatmapGrid.appendChild(cell);
             });
         }
     }
 
-    function heatColor(count) {
-        if (count === 0) return "rgba(52,199,89,0.5)";
-        if (count <= 2) return "rgba(255,204,0,0.8)";
-        if (count <= 4) return "rgba(255,149,0,0.85)";
-        return "rgba(255,59,48,0.9)";
-    }
-
-    /* === 출입/식권 데모 기능 === */
-    btnPassQR.addEventListener("click", () => {
-        const workerId = workerIdInput.value.trim();
-        if (!workerId) {
-            alert("작업자 이름 또는 ID를 입력해주세요.");
-            return;
-        }
-        if (!passQrInstance) {
-            passQrBox.innerHTML = "";
-            passQrInstance = new QRCode(passQrBox, {
-                text: "",
-                width: 160,
-                height: 160
-            });
-        }
-        const payload = `PASS:${workerId}`;
-        passQrInstance.makeCode(payload);
-    });
-
-    function addEntryLog(type) {
-        const workerId = workerIdInput.value.trim();
-        if (!workerId) {
-            alert("작업자 이름 또는 ID를 입력한 후 사용해주세요.");
-            return;
-        }
-        const now = new Date();
-        const log = {
-            id: crypto.randomUUID(),
-            workerId,
-            time: now,
-            type
-        };
-        entryLogs.unshift(log);
-        renderAdminLogs();
-    }
-
-    btnMockEntryIn.addEventListener("click", () => addEntryLog("입장"));
-    btnMockEntryOut.addEventListener("click", () => addEntryLog("퇴장"));
-
-    btnMealQR.addEventListener("click", () => {
-        const workerId = workerIdInput.value.trim();
-        if (!workerId) {
-            alert("작업자 이름 또는 ID를 입력한 후 사용해주세요.");
-            return;
-        }
-        if (!mealQrInstance) {
-            mealQrBox.innerHTML = "";
-            mealQrInstance = new QRCode(mealQrBox, {
-                text: "",
-                width: 160,
-                height: 160
-            });
-        }
-        const now = new Date();
-        const token = `MEAL-${formatFilenameDate(now)}-${Math.floor(1000 + Math.random() * 9000)}`;
-        mealQrInstance.makeCode(token);
-
-        mealStatus.textContent = `오늘 식권 발급됨 (ID: ${workerId})`;
-
-        const log = {
-            id: crypto.randomUUID(),
-            workerId,
-            time: now,
-            token
-        };
-        mealLogs.unshift(log);
-        renderAdminLogs();
-    });
-
-    /* === 관리자 로그 렌더링 === */
-    function renderAdminLogs() {
-        // 출입 로그
-        entryLogBody.innerHTML = "";
-        if (entryLogs.length === 0) {
-            const tr = document.createElement("tr");
-            const td = document.createElement("td");
-            td.colSpan = 3;
-            td.textContent = "출입 로그가 없습니다.";
-            td.style.textAlign = "center";
-            td.style.color = "#666";
-            tr.appendChild(td);
-            entryLogBody.appendChild(tr);
-        } else {
-            entryLogs.forEach(log => {
-                const tr = document.createElement("tr");
-                const tdTime = document.createElement("td");
-                const tdWorker = document.createElement("td");
-                const tdType = document.createElement("td");
-                tdTime.textContent = formatDate(log.time);
-                tdWorker.textContent = log.workerId;
-                tdType.textContent = log.type;
-                tr.appendChild(tdTime);
-                tr.appendChild(tdWorker);
-                tr.appendChild(tdType);
-                entryLogBody.appendChild(tr);
-            });
-        }
-
-        // 식권 로그
-        mealLogBody.innerHTML = "";
-        if (mealLogs.length === 0) {
-            const tr = document.createElement("tr");
-            const td = document.createElement("td");
-            td.colSpan = 3;
-            td.textContent = "식권 발급 로그가 없습니다.";
-            td.style.textAlign = "center";
-            td.style.color = "#666";
-            tr.appendChild(td);
-            mealLogBody.appendChild(tr);
-        } else {
-            mealLogs.forEach(log => {
-                const tr = document.createElement("tr");
-                const tdTime = document.createElement("td");
-                const tdWorker = document.createElement("td");
-                const tdToken = document.createElement("td");
-                tdTime.textContent = formatDate(log.time);
-                tdWorker.textContent = log.workerId;
-                tdToken.textContent = log.token;
-                tr.appendChild(tdTime);
-                tr.appendChild(tdWorker);
-                tr.appendChild(tdToken);
-                mealLogBody.appendChild(tr);
-            });
-        }
-    }
-
-    /* === 초기 실행 === */
+    /* ========= 초기 실행 ========= */
     initFloorSelects();
     initHazardWorkSelects();
     renderReportList();
     updateCSVButtonState();
-    renderAdminLogs();
 </script>
 </body>
 </html>
+
